@@ -5,8 +5,6 @@ export class Bank{
     static id = 1
     static allBanks =[]
     static transactionBankToBank = []
-    static ledgerRelation = []
-    static twoBank = []
     constructor(name){
         this.id = Bank.id++
         this.name = name
@@ -79,10 +77,6 @@ export class Bank{
         return this.accounts
     }
 //================================================================================================
-    static addLedger(bankName, transactionType){
-        let ledger = new LedgerData(bankName, transactionType)
-        Bank.transactionBankToBank.push()
-    }
     static calculateLedger(bankID){
 
     }

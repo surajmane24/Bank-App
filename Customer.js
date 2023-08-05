@@ -404,7 +404,6 @@ class Customer{
 
 
 
-
         } catch (error) {
             return error.specification
         }
