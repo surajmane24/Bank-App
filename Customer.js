@@ -382,8 +382,27 @@ class Customer{
             return error.specification
         }
     }
-}
+//==========All the requirments is done======================================================
+    getLedger(fromDate, toDate){
+        try {
+            if(!this.isAdmin){
+                throw new UnAuthorized("Customer not have access")
+            }
+            let date1 = new Date(fromDate)
+            if(typeof fromDate != 'string' || date1.toString() == 'Invalid Date'){
+                throw new UnAuthorized("Invalid From Date")
+            }
+            let date2 = new Date(toDate)
+            if(typeof toDate != 'string' || date2.toString() == 'Invalid Date'){
+                throw new UnAuthorized("Invalid To Date")
+            }
 
+        } catch (error) {
+            return error.specification
+        }
+    }
+}
+//==============================================================================================
 let a = Customer.newAdmin("Harry", "M")
 let cust1 = a.newCustomer("Rajesh", "M")
 let cust2 = a.newCustomer("Aniliya", "F")
@@ -424,3 +443,4 @@ console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 console.log(a.totalNetWorth(3));
 console.log(a.getAccountByBankID(1));
 
+console.log(a.getLedger());
