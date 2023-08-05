@@ -1,13 +1,16 @@
+import { LedgerData } from "./LedgerData.js";
 import { NotFound } from "./NotFound.js";
 import { Validation } from "./Validation.js";
 export class Bank{
     static id = 1
     static allBanks =[]
+    static transactionBankToBank = []
+    static ledgerRelation = []
+    static twoBank = []
     constructor(name){
         this.id = Bank.id++
         this.name = name
         this.accounts = []
-        
     }
     static addAccount(bankID, account){
         let index = Bank.findBankID(bankID)
@@ -74,5 +77,20 @@ export class Bank{
     }
     getAllAccounts(){
         return this.accounts
+    }
+//================================================================================================
+    static addLedger(bankName, transactionType){
+        let ledger = new LedgerData(bankName, transactionType)
+        Bank.transactionBankToBank.push()
+    }
+    static calculateLedger(bankID){
+
+    }
+    createLedgerRelation(newBank){
+        for (let i = 0; i < allBanks.length; i++) {
+            let twoBank = Bank.twoBank.push(allBanks[i])
+            Bank.ledgerRelation.push(twoBank)
+        }
+
     }
 }

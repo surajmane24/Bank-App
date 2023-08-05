@@ -324,10 +324,11 @@ class Customer{
                 throw new Validation("Invalid Receiver Account ID")
             }
             let indexOfReceiverCustomer = Customer.findCustomerID(receiverCustomerId)
-            console.log("Inside total Net worth");
-            console.log(indexOfReceiverCustomer);
+            // console.log("Inside total Net worth");
+            // console.log(indexOfReceiverCustomer);
             this.withdraw(amount, fromAccoutId)
             Customer.allCustomers[indexOfReceiverCustomer].deposit(amount, receiverAccountId)
+
         } catch (error) {
             return error.specification
         }
@@ -383,19 +384,26 @@ class Customer{
         }
     }
 //==========All the requirments is done======================================================
-    getLedger(fromDate, toDate){
+    getLedger(bankID, fromDate, toDate){
         try {
             if(!this.isAdmin){
                 throw new UnAuthorized("Customer not have access")
             }
+            if(typeof bankID != 'string'){
+                throw new Validation("Invalid Bank ID")
+            }
             let date1 = new Date(fromDate)
             if(typeof fromDate != 'string' || date1.toString() == 'Invalid Date'){
-                throw new UnAuthorized("Invalid From Date")
+                throw new Validation("Invalid From Date")
             }
             let date2 = new Date(toDate)
             if(typeof toDate != 'string' || date2.toString() == 'Invalid Date'){
-                throw new UnAuthorized("Invalid To Date")
+                throw new Validation("Invalid To Date")
             }
+
+
+
+
 
         } catch (error) {
             return error.specification
@@ -433,14 +441,15 @@ console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 // console.log(cust1.withdraw(200, 3));
 
 //transferMoney(amount, fromAccoutId, receiverCustomerId, receiverAccountId)
-// console.log(cust1.transferMoney(5, 1, 3, 6));
+console.log(cust1.transferMoney(5, 1, 3, 6));
 // console.log(cust1.getAllAccount());
 // console.log(cust2.getAllAccount());
 
-// console.log(cust1.getPassbook(1));
+console.log(cust1.getPassbook(1));
+console.log(cust2.getPassbook(6));
 // console.log(cust2.getPassbook(6));
 
 console.log(a.totalNetWorth(3));
 console.log(a.getAccountByBankID(1));
 
-console.log(a.getLedger());
+// console.log(a.getLedger());
