@@ -1,4 +1,3 @@
-import { Transaction } from "./Transaction.js";
 import { NotFound } from "./NotFound.js";
 import { Validation } from "./Validation.js";
 export class Bank{

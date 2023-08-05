@@ -421,5 +421,6 @@ console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 // console.log(cust1.getPassbook(1));
 // console.log(cust2.getPassbook(6));
 
-console.log(a.totalNetWorth(2));
+console.log(a.totalNetWorth(3));
 console.log(a.getAccountByBankID(1));
+

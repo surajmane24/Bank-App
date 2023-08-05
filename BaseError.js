@@ -5,3 +5,4 @@ export class BaseError extends Error{
         this.specification = specification  
     }
 }
+
