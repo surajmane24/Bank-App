@@ -1,6 +1,5 @@
 import { Account } from "./Account.js";
 import { Bank } from "./Bank.js";
-import { Transaction } from "./Transaction.js";
 import { UnAuthorized } from "./UnAuthorized.js";
 import { NotFound } from "./NotFound.js";
 import { Validation } from "./Validation.js";
@@ -60,7 +59,11 @@ class Customer{
     static findCustomerID(customerID){
         try {
             for (let index = 0; index < Customer.allCustomers.length; index++) {
+                console.log(Customer.allCustomers[index].id);
+                
+                
                 if(customerID == Customer.allCustomers[index].id){     //====================================
+                    console.log(index);
                     return index    
                 }  
             }
@@ -127,7 +130,7 @@ class Customer{
             }
      
             let bank = new Bank(name)
-            Customer.allBanks.push(bank)
+            Bank.allBanks.push(bank)
             return bank
         } catch (error) {
             return error.specification
@@ -138,15 +141,15 @@ class Customer{
             if(!this.isAdmin){
                 throw new UnAuthorized("Unauthorized Access")
             }
-            return Customer.allBanks
+            return Bank.allBanks
         } catch (error) {
             return error.specification
         }
     }
     static findBankID(bankID){
         try {
-            for (let index = 0; index < Customer.allBanks.length; index++) {
-                if(bankID == Customer.allBanks[index].getBankID()){     //====================================
+            for (let index = 0; index < Bank.allBanks.length; index++) {
+                if(bankID == Bank.allBanks[index].getBankID()){     //====================================
                     return index    
                 }  
             }
@@ -167,7 +170,7 @@ class Customer{
                 throw new Validation("Invalid Value") 
             } 
             let indexOfCustomer  = Customer.findBankID(bankID)
-            return Customer.allBanks[indexOfCustomer].setBankName(name)
+            return Bank.allBanks[indexOfCustomer].setBankName(name)
         }   
         catch (error) {
             return error.specification
@@ -182,8 +185,8 @@ class Customer{
                 throw new UnAuthorized("Unauthorized Access")
             }
             let indexOfCustomer = Customer.findBankID(bankID)
-            Customer.allBanks.splice(indexOfCustomer, 1)
-            return Customer.allBanks
+            Bank.allBanks.splice(indexOfCustomer, 1)
+            return Bank.allBanks
         } catch (error) {
             return error.specification
         }
@@ -201,9 +204,8 @@ class Customer{
             if(typeof balance != 'number'){
                 throw new Validation("Invalid Balance") 
             }
-            let bankIndex = Customer.findBankID(bankID)
             let account = new Account(balance)
-            Customer.allBanks[bankIndex].addAccount(account)
+            Bank.addAccount(bankID, account)
             this.accounts.push(account)
             return this.accounts
         } catch (error) {
@@ -229,7 +231,7 @@ class Customer{
             }
             throw new NotFound("Account ID not found")
         } catch (error) {
-            throw error.specification
+            throw error
         }
     }
     updateAccount(accountID, newBalance){
@@ -240,8 +242,9 @@ class Customer{
             if(typeof newBalance != 'number'){
                 throw new Validation("Invalid Amount") 
             }
+            console.log("shbjshbn");
             let accountIndex = this.findAccountID(accountID)
-            this.accounts[accountIndex].setAccountBalance(balance)
+            this.accounts[accountIndex].setAccountBalance(newBalance)
             return this.accounts[accountIndex]
         } catch (error) {
             return error.specification
@@ -255,8 +258,10 @@ class Customer{
             if(this.isAdmin){
                 throw new UnAuthorized("Unauthorized Access")
             }
+            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>");
             let indexOfAccount = this.findAccountID(accountID)
             this.accounts.splice(indexOfAccount,1)
+            Bank.deleteAccountFromBank(accountID)
             return this.accounts
         } catch (error) {
             return error.specification
@@ -318,12 +323,9 @@ class Customer{
             if(typeof receiverAccountId != 'number'){
                 throw new Validation("Invalid Receiver Account ID")
             }
-            //if(typeof receiverBankId != 'number'){
-                //     throw new Validation("Invalid Amount")
-                // }
-            // let indexOfAccount = this.findAccountID(fromAccoutId)
             let indexOfReceiverCustomer = Customer.findCustomerID(receiverCustomerId)
-            // let indexOfReceicerCustomerAccount = Customer.allCustomers[indexOfReceiverCustomer].findAccountID(receiverAccountId)
+            console.log("Inside total Net worth");
+            console.log(indexOfReceiverCustomer);
             this.withdraw(amount, fromAccoutId)
             Customer.allCustomers[indexOfReceiverCustomer].deposit(amount, receiverAccountId)
         } catch (error) {
@@ -335,7 +337,7 @@ class Customer{
             if(this.isAdmin){
                 throw new UnAuthorized("Admin do not have Access")
             }
-            if(typeof accountID != 'string'){
+            if(typeof accountID != 'number'){
                 throw new Validation("Invalid Account ID")
             }
             let indexOfAccount = this.findAccountID(accountID)
@@ -344,32 +346,38 @@ class Customer{
             return error.specification
         }
     }
+//==============================================================================================
     totalNetWorth(customerID){
         try {
+            if(!this.isAdmin){
+                throw new UnAuthorized("User do not have Access")
+            }
             if(typeof customerID != 'number'){
                 throw new Validation("Invalid Customer ID")
             }
             let totalNetWorth = 0
+            console.log("Inside total Net worth");
             let indexOfCustomer = Customer.findCustomerID(customerID)
+            console.log("Inside total Net worth===");
             for (let i = 0; i < Customer.allCustomers[indexOfCustomer].accounts.length; i++) {
-                totalNetWorth += Customer.allCustomers[indexOfCustomer].accounts[i].getAccountBalance()
+                totalNetWorth = totalNetWorth + Customer.allCustomers[indexOfCustomer].accounts[i].getAccountBalance()
                 
             }
-            return totalNetWorth
+
+            return "Total Net Worth =>> "+totalNetWorth
         } catch (error) {
             return error.specification
         }
     }
-    getAccountsInBank(bankID){
+    getAccountByBankID(bankID){
         try {
-            if(typeof bankID != 'number'){
-                throw new Validation("Invalid bank ID")
-            }
             if(!this.isAdmin){
                 throw new UnAuthorized("Customer not have access")
             }
-            let indexOfBank = Customer.findBankID(bankID)
-            return Customer.allBanks[indexOfBank].getAllAccounts()
+            if(typeof bankID != 'number'){
+                throw new Validation("Invalid Bank ID")
+            }
+            return Bank.getAccountByBankID(bankID)
         } catch (error) {
             return error.specification
         }
@@ -384,8 +392,34 @@ let bank2 = a.createBank("IDBI")
 
 // console.log(a.updateCustomer(3,"name", "zazaza"));
 // console.log(a.deleteCustomer(3));
-// console.log(a.getAllCustomers());
+console.log(a.getAllCustomers());
 
 // console.log(a.updateBank(1, "SBI"));
 // console.log(a.deleteBank(2));
-console.log(a.getAllBanks());
+// console.log(a.getAllBanks());
+
+console.log(cust1.createAccount(1,500));
+console.log(cust1.createAccount(1,1000));
+console.log(cust1.createAccount(2,1500));
+
+console.log(cust2.createAccount(1,7777));
+console.log(cust2.createAccount(2,88888));
+console.log(cust2.createAccount(2,9999));
+console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+// console.log(a.getAllBanks());
+// console.log(cust1.deleteAccount(2));
+// console.log(cust1.updateAccount(2, 400));
+// console.log(cust1.deposit(20, 1));
+// console.log(cust1.deposit(40, 1));
+// console.log(cust1.withdraw(200, 3));
+
+//transferMoney(amount, fromAccoutId, receiverCustomerId, receiverAccountId)
+// console.log(cust1.transferMoney(5, 1, 3, 6));
+// console.log(cust1.getAllAccount());
+// console.log(cust2.getAllAccount());
+
+// console.log(cust1.getPassbook(1));
+// console.log(cust2.getPassbook(6));
+
+console.log(a.totalNetWorth(2));
+console.log(a.getAccountByBankID(1));
